@@ -1,0 +1,26 @@
+function [ FF ] = C_Newton( N,h,Phi,n,p,mup,mun,Theta_n,Theta_p,ni,B,SRH,t )
+%UNTITLED Summary of this function goes here
+%   Detailed explanation goes here
+    F = zeros(N-1,1);    
+    switch t
+        case 1  % electrons
+            for i=2:N
+                F(i) = 2/(h(i)+h(i-1))*1/h(i-1)* mun(i)*BER(-Phi(i)-Theta_n(i)+Phi(i-1)+Theta_n(i-1))*n(i-1)...
+                        -2/(h(i)+h(i-1))* (1/h(i-1)* mun(i)*BER(-Phi(i-1)-Theta_n(i-1)+Phi(i)+Theta_n(i))...
+                        +1/h(i)* mun(i+1)*BER(-Phi(i+1)-Theta_n(i+1)+Phi(i)+Theta_n(i)))*n(i) +...
+                        +2/(h(i)+h(i-1))*1/h(i)* mun(i+1)*BER(-Phi(i)-Theta_n(i)+Phi(i+1)+Theta_n(i+1))*n(i+1) ...
+                        +(B-SRH(i))*n(i)*p(i)+SRH(i)*ni(i)^2; 
+            end 
+            FF = F(2:N);
+        case 2  % holes
+            for i=2:N
+                F(i) = 2/(h(i)+h(i-1))*1/h(i-1)* mup(i)*BER(Phi(i)-Theta_p(i)-Phi(i-1)+Theta_p(i-1))*p(i-1)...
+                       -2/(h(i)+h(i-1))* (1/h(i-1)* mup(i)*BER(Phi(i-1)-Theta_p(i-1)-Phi(i)+Theta_p(i)) ...
+                       +1/h(i)* mup(i+1)*BER(Phi(i+1)-Theta_p(i+1)-Phi(i)+Theta_p(i)))*p(i) + ...
+                       2/(h(i)+h(i-1))*1/h(i)* mup(i+1)*BER(Phi(i)-Theta_p(i)-Phi(i+1)+Theta_p(i+1))*p(i+1)...
+                       +(B-SRH(i))*n(i)*p(i)+SRH(i)*ni(i)^2;
+            end 
+            FF = F(2:N);
+    end
+end
+
